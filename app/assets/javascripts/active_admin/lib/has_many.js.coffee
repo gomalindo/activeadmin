@@ -52,7 +52,8 @@ $ ->
   $(document).on 'change','.has_many_container[data-sortable] :input[name$="[_destroy]"]', ->
     recompute_positions $(@).closest '.has_many'
 
-  init_sortable()
+  if typeof Turbolinks == 'undefined'
+    init_sortable()
   $(document).on 'has_many_add:after', '.has_many_container', init_sortable
 
 
@@ -77,3 +78,5 @@ recompute_positions = (parent)->
 
     if sortable_input.length
       sortable_input.val if destroy_input.is ':checked' then '' else position++
+
+$(document).on 'page:load turbolinks:load', init_sortable
