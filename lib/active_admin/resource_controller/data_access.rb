@@ -285,6 +285,7 @@ module ActiveAdmin
       # @return [ActiveRecord::Base] resource
       #
       def assign_attributes(resource, attributes)
+        attributes[0].merge!(initial_attributes)
         if resource.respond_to?(:assign_attributes)
           resource.assign_attributes(*attributes)
         else
@@ -316,6 +317,17 @@ module ActiveAdmin
       #   resource after creating this one.
       def create_another?
         params[:create_another].present?
+      end
+
+      # cancancan initial attributes from ability definition for the resource
+      # https://github.com/CanCanCommunity/cancancan/wiki/authorizing-controller-actions#new-and-create-actions
+      def initial_attributes
+        return {} unless ActiveAdmin::Dependency.cancan? ||
+                         ActiveAdmin::Dependency.cancancan?
+
+         active_admin_authorization.cancan_ability.attributes_for(
+          action_to_permission(params[:action]), resource_class
+        )
       end
     end
   end
