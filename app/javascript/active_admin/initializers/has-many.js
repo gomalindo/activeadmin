@@ -1,4 +1,4 @@
-$(function() {
+(($, ActiveAdmin) => {
   // Provides a before-removal hook:
   // $ ->
   //   # This is a good place to tear down JS plugins to prevent memory leaks.
@@ -57,9 +57,9 @@ $(function() {
     recompute_positions($(this).closest('.has_many'));
   });
 
-  init_sortable();
+  if (!ActiveAdmin.turbolinks()) init_sortable();
   $(document).on('has_many_add:after', '.has_many_container', init_sortable);
-});
+})(jQuery, window.activeadmin);
 
 var init_sortable = function() {
   const elems = $('.has_many_container[data-sortable]:not(.ui-sortable)');
@@ -93,3 +93,5 @@ var recompute_positions = function(parent){
     }
   });
 };
+
+$(document).on('page:load turbolinks:load', init_sortable);
